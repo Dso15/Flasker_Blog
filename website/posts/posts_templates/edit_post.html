@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+
+
+{% block content %}
+<h1 class="text-center text-light mb-3">Edit Blog Post...</h1>
+
+<div class="shadow p-3 mb-5 bg-dark text-light rounded">
+    <form action="{{ url_for('posts.edit_post', id=post_id) }}" method="post">
+        {{ form.hidden_tag() }}
+
+        {{ form.title.label(class='form-label')}}
+        {{ form.title(class='form-control  mb-3', style="background-color: #c9c9c9;")}}
+
+        {{ form.slug.label(class='form-label')}}
+        {{ form.slug(class='form-control mb-3', style="background-color: #c9c9c9;")}}
+
+        {{ form.content.label(class='form-label')}}
+        {{ form.content(class='form-control', rows='5', style="background-color: #c9c9c9;")}}
+
+        <button type="submit" class="btn btn-secondary btn-sm mt-3">Edit Post</button>
+    </form>
+    {{ ckeditor.load() }}
+    {{ ckeditor.config(name='content')}}
+</div>    
+<a href="{{ url_for('posts.my_posts') }}" class="btn btn-dark btn-sm"><i class="bi bi-arrow-left-short"></i> Back to Blog</a>    
+
+{% endblock %}

@@ -1,0 +1,85 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    {% if id == current_user.id or current_user.is_admin == True %}
+        <div class="row">
+            <div class="col-4">
+            <div class="list-group" id="list-tab" role="tablist">
+                <a class="list-group-item list-group-item-action show active list-group-item-dark" id="list-profile-list" data-bs-toggle="list" href="#list-profile" role="tab" aria-controls="list-profile">Profile</a>
+                <a class="list-group-item list-group-item-action list-group-item-dark" id="list-password-list" data-bs-toggle="list" href="#list-password" role="tab" aria-controls="list-password">Change Password</a>
+                <a class="list-group-item list-group-item-action list-group-item-dark" id="list-settings-list" data-bs-toggle="list" href="#list-settings" role="tab" aria-controls="list-settings">Settings</a>
+            </div>
+            </div>
+            <div class="col-8">
+            <div class="tab-content" id="nav-tabContent">
+
+                <div class="tab-pane fade show active" id="list-profile" role="tabpanel" aria-labelledby="list-profile-list">
+                    <div class="card">
+                        <h5 class="card-header text-center bg-dark text-light">Edit Profile</h5>
+                        <div class="card-body" style="background-color: #c9c9c9;">
+                            <form action="{{ url_for('users.edit_account', id=current_user.id) }}" method="POST" class="px-5">
+                                {{ form.hidden_tag() }}
+                                {{ form.identifier(hidden=True, value='EditAccountForm') }}
+                                
+                                <strong>{{ form.name.label(class='form-label')}}</strong>
+                                {{ form.name(class='form-control')}}
+                                <br />
+                
+                                <strong>{{ form.username.label(class='form-label')}}</strong>
+                                {{ form.username(class='form-control')}}
+                                <br />
+                
+                                <strong>{{ form.email.label(class='form-label')}}</strong>
+                                {{ form.email(class='form-control')}}
+                                <br />
+                                        
+                                <div class="vstack gap-2 col-md-5 mx-auto">
+                                    {{ form.submit(class='btn btn-dark btn-sm')}}
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="tab-pane fade" id="list-password" role="tabpanel" aria-labelledby="list-password-list">
+                    <div class="card">
+                        <h5 class="card-header text-center bg-dark text-light">Change Password</h5>
+                        <div class="card-body" style="background-color: #c9c9c9;">
+                            <form action="{{ url_for('users.edit_account', id=current_user.id) }}" method="POST" class="px-5">
+                                {{ change_password_form.hidden_tag() }}
+                                {{ form.identifier(hidden=True, value='ChangePasswordForm') }}
+                                
+                                <strong>{{ change_password_form.password.label(class='form-label')}}</strong>
+                                {{ change_password_form.password(class='form-control')}}
+                                <br />
+                
+                                <strong>{{ change_password_form.re_password.label(class='form-label')}}</strong>
+                                {{ change_password_form.re_password(class='form-control')}}
+                                <br />
+                                        
+                                <div class="vstack gap-2 col-md-5 mx-auto">
+                                    {{ change_password_form.submit(class='btn btn-dark btn-sm')}}
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+                
+                <div class="tab-pane fade" id="list-settings" role="tabpanel" aria-labelledby="list-settings-list">
+                    <div class="card">
+                        <h5 class="card-header text-center bg-dark text-light">Settings</h5>
+                        <div class="card-body" style="background-color: #c9c9c9;">
+        
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+            </div>
+        </div>
+    {% else %}
+       {{ abort(404) }} 
+    {% endif %}
+
+{% endblock %}

@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="card">
+    <h5 class="card-header text-center bg-dark text-light">Forgot Password</h5>
+    <div class="card-body" style="background-color: #c9c9c9;">
+        <form action="{{ url_for('users.reset_request') }}" method="POST" class="px-5">
+            {{ form.hidden_tag() }}
+            
+            <strong>{{ form.email.label(class='form-label')}}</strong>
+            {{ form.email(class='form-control mb-3')}}
+            
+            {% if form.errors %}
+                <ul class="errors">
+                    {% for field_name, field_errors in form.errors|dictsort if field_errors %}
+                        {% for error in field_errors %}
+                            <li>{{ form[field_name].label }} {{ error }}</li>
+                        {% endfor %}
+                    {% endfor %}
+                </ul>
+            {% endif %}
+                    
+            <div class="vstack gap-2 col-md-5 mx-auto">
+                {{ form.submit(class='btn btn-dark btn-sm')}}
+            </div>
+        </form>
+    </div>
+</div>
+
+{% endblock %}

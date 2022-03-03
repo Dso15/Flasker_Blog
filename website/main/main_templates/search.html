@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+    <h1 class="text-center text-light mb-3">Search Result for:</h1>
+    
+    {% if posts %}
+        <h3 class="text-center text-light mb-5"><em>{{ searched }}</em></h3>
+    
+        <div class="container my-3">
+            <div class="row">
+                {% for post in posts %}    
+                    <div class="col-sm-4 mb-3">
+                        <div class="card text-start bg-dark text-light">
+                            <div class="card-body">
+                                <h5 class="card-title"><a href="{{ url_for('posts.view_post', id=post.id) }}" class="link-light"><h2><i class="bi bi-envelope me-2"></i>  {{ post.title}}</h2></a></h5>
+                            </div>
+            
+                            <div class="card-footer text-muted">
+                                <div class="row">
+                                    <div class="col-8">
+                                        <small>
+                                            by: {{ post.poster.name}} <br />
+                                            Post at: {{ post.date_posted}} 
+                                        </small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}     
+            </div>
+        </div>
+    {% else %}
+        <h3 class="text-center text-light">There is no result for "{{ searched }}".</h3>
+    {% endif %}
+         
+{% endblock %}
