@@ -39,13 +39,13 @@ def add_post():
 
 
 # -------------------- View_Post Route --------------------
-@posts.route('/view-post/<int:id>')
+@posts.route('/view-post/<slug>/<int:id>')
 @login_required
 @check_confirmed
-def view_post(id):
+def view_post(slug, id):
     post = Post.query.get_or_404(id)
 
-    return render_template('view_post.html', post=post)
+    return render_template('view_post.html', post=post, slug=slug)
 # -------------------- End of View_Post Route --------------------
 
 
