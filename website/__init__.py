@@ -33,5 +33,8 @@ def create_app(config_object=Config):
     ckeditor.init_app(app)
     admin.init_app(app, index_view=MyAdminIndexView())
 
+    with app.app_context():
+        db.create_all()
+
     return app
 # -------------------- End of Create_App Func --------------------

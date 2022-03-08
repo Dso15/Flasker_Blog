@@ -1,6 +1,6 @@
 from flask_wtf import FlaskForm
 from flask_ckeditor import CKEditorField
-from wtforms import EmailField, PasswordField, StringField, SubmitField
+from wtforms import EmailField, PasswordField, StringField, SubmitField, SelectField
 from wtforms.validators import DataRequired, Email, Length, EqualTo, ValidationError
 from wtforms.widgets import TextArea
 
@@ -14,6 +14,7 @@ class LoginForm(FlaskForm):
     password = PasswordField('Password:')
     submit = SubmitField('Login')
 
+
 class RegisterForm(FlaskForm):
     name = StringField('Name:', validators=[DataRequired()])
     username = StringField('Username:', validators=[DataRequired()])
@@ -22,6 +23,7 @@ class RegisterForm(FlaskForm):
     re_password = PasswordField('Confirm Password:', validators=[DataRequired()])
     submit = SubmitField('Register')
 
+
 class EditAccountForm(FlaskForm):
     identifier = StringField()
     name = StringField('Name:', validators=[DataRequired()])
@@ -29,15 +31,18 @@ class EditAccountForm(FlaskForm):
     email = EmailField('Email:', validators=[DataRequired(), Email()])
     submit = SubmitField('Save Changes')
 
+
 class ConfirmEmailForm(FlaskForm):
     email = EmailField('Email:', validators=[DataRequired(), Email()])
     submit = SubmitField('Confirm Email')
+
 
 class ChangePasswordForm(FlaskForm):
     identifier = StringField()
     password = PasswordField('Password:', validators=[DataRequired(), Length(min=8, max=30), EqualTo('re_password', message="'Password' must be equal to 'Confirm Password'.")])
     re_password = PasswordField('Confirm Password:', validators=[DataRequired()])
     submit = SubmitField('Change Password')
+
 
 class RequestResetPasswordForm(FlaskForm):
     email = EmailField('Email:', validators=[DataRequired(), Email()])
@@ -49,6 +54,7 @@ class RequestResetPasswordForm(FlaskForm):
         if user is None:
             raise ValidationError("There is no account with that email. You must register first.")
 
+
 class ResetPasswordForm(FlaskForm):
     password = PasswordField('Password:', validators=[DataRequired(), Length(min=8, max=32)])
     confirm_password = PasswordField('Confirm Password:', validators=[DataRequired(), EqualTo('password')])
@@ -59,11 +65,14 @@ class ResetPasswordForm(FlaskForm):
 # -------------------- Post Forms --------------------
 class AddPostForm(FlaskForm):
     title = StringField('Title:', validators=[DataRequired()])
-    # content = StringField('Content:', validators=[DataRequired()], widget=TextArea())
     content = CKEditorField('Content:', validators=[DataRequired()])
-    slug = StringField('Slug:', validators=[DataRequired()])
+    slug = SelectField('Categories', choices=[], validators=[DataRequired()])
     submit = SubmitField('Add Post')
 
+
+class ReplyForm(FlaskForm):
+    content = CKEditorField('Content:', validators=[DataRequired()])
+    submit = SubmitField('Reply')
 
 
 class SearchForm(FlaskForm):

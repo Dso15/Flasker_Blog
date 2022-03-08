@@ -2,31 +2,38 @@
 
 
 {% block content %}
+<h1 class="text-center text-light mb-3">Latest 3 Posts</h1>
+
 <div class="container my-3">
-    
     <div class="row">
-        {% for post in posts %}    
-            <div class="col-sm-4 mb-3">
+        {% for post in posts %}
+            <div class="col-lg-4 mb-3">
                 <div class="card text-start bg-dark text-light">
                     <div class="card-body">
-                        <h5 class="card-title"><a href="{{ url_for('posts.view_post', id=post.id, slug=post.slug.replace(' ', '-')) }}" class="link-light"><h2><i class="bi bi-envelope me-2"></i>  {{ post.title}}</h2></a></h5>
+                        <h5 class="card-title"><a href="{{ url_for('posts.view_post', id=post.id, slug=post.category.name) }}" class="link-light"><i class="bi bi-file-earmark-richtext me-2"></i>  {{ post.title }}</a></h5>
                     </div>
     
                     <div class="card-footer text-muted">
                         <div class="row">
                             <div class="col-8">
-                                <small>
-                                    by: {{ post.poster.name}} <br />
-                                    Post at: {{ post.date_posted}} 
-                                </small>
+
+                                <div class="row">
+                                    <div class="col-12">
+                                        <small>category: {{ post.category.name }}</small>
+                                        </div>
+                                        <div class="col-12">
+                                        <small>posted time: {{ post.date_posted}}</small>
+                                    </div>
+                                </div>
+
+
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-        {% endfor %}     
+        {% endfor %} 
     </div>
-     
 </div>
 
 {% endblock %}

@@ -1,7 +1,7 @@
-from flask import Blueprint, redirect, render_template, flash, url_for
+from flask import Blueprint, redirect, render_template, flash, url_for, abort
 from flask_login import current_user, login_required
-from website.webforms import AddPostForm
-from website.models import Post, db
+from website.webforms import AddPostForm, ReplyForm
+from website.models import Post, Slug, Message, db
 from website.decoretors import check_confirmed
 
 
@@ -10,12 +10,19 @@ from website.decoretors import check_confirmed
 posts = Blueprint('posts', __name__, template_folder='posts_templates', url_prefix='/posts')
 
 
+# Global variables
+LIMIT_POST_ON_PAGE = 3
+
+
 # -------------------- Add_Post Route --------------------
 @posts.route('add-post', methods=['GET', 'POST'])
 @login_required
 @check_confirmed
 def add_post():
     form = AddPostForm()
+    # Getting all categories to the selected field
+    categories = [(g.id, g.name) for g in Slug.query.order_by('name')]
+    form.slug.choices = categories
 
     if form.validate_on_submit():
         poster = current_user.id
@@ -39,14 +46,67 @@ def add_post():
 
 
 # -------------------- View_Post Route --------------------
-@posts.route('/view-post/<slug>/<int:id>')
+@posts.route('/view-post/<slug>/<int:id>', methods=['GET', 'POST'])
 @login_required
 @check_confirmed
 def view_post(slug, id):
-    post = Post.query.get_or_404(id)
+    # Variables
+    messages = [message for message in Message.query.filter_by(post_id=id)]
+    len_messages = len([message for message in messages])
+    number_of_pages = len([i for i in range(0, len(messages), LIMIT_POST_ON_PAGE)])
 
-    return render_template('view_post.html', post=post, slug=slug)
+    post = Post.query.get_or_404(id)
+    form = ReplyForm()
+
+
+    if form.validate_on_submit():
+        message = Message(content=form.content.data, post_id=id, user_id=current_user.id)
+        db.session.add(message)
+        db.session.commit()
+
+        number_of_pages = len([i for i in range(0, len([message for message in Message.query.filter_by(post_id=id)]), LIMIT_POST_ON_PAGE)])
+        
+        return redirect(url_for('posts.view_messages', slug=slug, id=id, page_number=number_of_pages))
+
+
+    return render_template('view_post.html', slug=slug, id=id, post=post, form=form, messages=messages, 
+                                            len_messages=len_messages, limit_post_on_page=LIMIT_POST_ON_PAGE, number_of_pages=number_of_pages)
 # -------------------- End of View_Post Route --------------------
+
+
+# -------------------- View_Messages Route --------------------
+@posts.route('/view-post/<slug>/<int:id>/page=<int:page_number>', methods=['GET', 'POST'])
+@login_required
+@check_confirmed
+def view_messages(slug, id, page_number):
+    # Variables
+    messages = [message for message in Message.query.filter_by(post_id=id)]
+    number_of_pages = len([i for i in range(0, len(messages), LIMIT_POST_ON_PAGE)])
+    start_list_index = (page_number - 1) * LIMIT_POST_ON_PAGE
+    end_list_index = page_number * LIMIT_POST_ON_PAGE
+
+    post = Post.query.get_or_404(id)
+    form = ReplyForm()
+
+
+    if page_number == 1: return redirect(url_for('posts.view_post', slug=slug, id=id))
+    if page_number > number_of_pages: return abort(404)
+    
+    if form.validate_on_submit():
+        message = Message(content=form.content.data, post_id=id, user_id=current_user.id)
+        db.session.add(message)
+        db.session.commit()
+
+        messages = [message for message in Message.query.filter_by(post_id=id)]
+        number_of_pages = len([i for i in range(0, len(messages), LIMIT_POST_ON_PAGE)])
+
+        return redirect(url_for('posts.view_messages', slug=slug, id=id, page_number=number_of_pages))
+
+
+    return render_template('view-messages.html', messages=messages, slug=slug, id=id, post=post, 
+                                                form=form, start_list_index=start_list_index, 
+                                                end_list_index=end_list_index, number_of_pages=number_of_pages, page_number=page_number)
+# -------------------- End of View_Messages Route --------------------
 
 
 # -------------------- Edit_Post Route --------------------
@@ -54,6 +114,7 @@ def view_post(slug, id):
 @login_required
 @check_confirmed
 def edit_post(id):
+    # Variables
     post = Post.query.get_or_404(id)
     form = AddPostForm()
 
@@ -125,3 +186,18 @@ def my_posts():
 
     return render_template('posts.html', posts=posts)
 # -------------------- End of My_Posts Route --------------------
+
+
+# -------------------- Posts_Category Route --------------------
+@posts.route('/posts/<category>')
+@login_required
+@check_confirmed
+def posts_category(category):
+    # Variables
+    slug_id = Slug.query.filter_by(name=category).first_or_404()
+    posts = Post.query.filter_by(slug=slug_id.id)
+    messages = Message.query.order_by('date_posted')
+
+
+    return render_template('posts_category.html', posts=posts, category=category, messages=messages)
+# -------------------- Posts_Category Route --------------------

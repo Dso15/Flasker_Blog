@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<P><a href="{{ url_for('main.index') }}" class="link-light">index</a> <strong>></strong> {{ category }}</P>
+
+<h1 class="text-center text-light mb-4">Post in {{ category }}</h1>
+
+<div class="container my-3">
+    <div class="row">
+        {% for post in posts %}
+            <div class="col-sm-4 mb-3">
+                <div class="card text-start bg-dark text-light">
+                    <div class="card-body">
+                        <h5 class="card-title"><a href="{{ url_for('posts.view_post', id=post.id, slug=post.category.name) }}" class="link-light"><i class="bi bi-file-earmark-richtext me-2"></i>  {{ post.title }}</a></h5>
+                    </div>
+    
+                    <div class="card-footer text-muted">
+                        <div class="row">
+                            <div class="col-8">
+                                <small>
+                                    by: {{ post.title }} <br />
+                                </small>
+                            </div>
+                            <div class="col-4 d-flex justify-content-end">
+                                {% set count = namespace(value=0) %}
+                                {% for message in messages %}
+                                    {% if message.post_id == post.id %}
+                                        {% set count.value = count.value + 1 %}
+                                    {% endif %}
+                                {% endfor %}
+                                <i class="bi bi-envelope mx-2"></i> {{ count.value }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% endfor %} 
+    </div>
+</div>
+
+
+{% endblock %}

@@ -2,12 +2,13 @@ from flask import abort
 from flask_admin import Admin, AdminIndexView
 from flask_admin.contrib.sqla import ModelView
 from flask_login import current_user
-from website.models import db, User
+from website.models import db, User, Slug
 
 
 
 admin = Admin()
 admin.add_view(ModelView(User, db.session))
+admin.add_view(ModelView(Slug, db.session))
 
 
 # -------------------- Admin Model --------------------   

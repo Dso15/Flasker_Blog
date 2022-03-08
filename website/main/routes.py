@@ -1,5 +1,5 @@
 from flask import Blueprint, render_template
-from website.models import Post
+from website.models import Post, Slug
 from website.webforms import SearchForm
 
 
@@ -8,23 +8,26 @@ from website.webforms import SearchForm
 main = Blueprint('main', __name__, template_folder='main_templates')
 
 
+
+# Pass stuff to base file
+@main.app_context_processor
+def base():
+    form = SearchForm()
+    categories = Slug.query.order_by('id')
+    return dict(form=form, categories=categories)
+
+    
 # -------------------- Index Route --------------------
 @main.route('/')
 def index():
     posts = Post.query.order_by(Post.date_posted)
 
-    return render_template('index.html', posts=posts)
+    # Post the latest 3 post.
+    return render_template('index.html', posts=posts[-3:])
 # -------------------- End of Index Route --------------------
 
 
 # -------------------- Search Route --------------------
-# Pass stuff to base file
-@main.app_context_processor
-def base():
-    form = SearchForm()
-    a = 'Test'
-    return dict(form=form, a=a)
-
 @main.route('/search', methods=['POST'])
 def search():
     form = SearchForm()

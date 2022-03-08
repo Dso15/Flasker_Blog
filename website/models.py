@@ -38,8 +38,9 @@ class Post(db.Model):
     title = db.Column(db.String(255))
     content = db.Column(db.Text)
     date_posted = db.Column(db.DateTime, default=datetime.now)
-    slug = db.Column(db.String(255))
+    slug = db.Column(db.Integer, db.ForeignKey('slug.id'))
     poster_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    messages = db.relationship('Message', backref='message')
 # -------------------- End of Post Model --------------------
 
 
@@ -54,6 +55,7 @@ class User(db.Model, UserMixin):
     confirm_at = db.Column(db.DateTime)
     is_admin = db.Column(db.Boolean, default=False, nullable=False)
     posts = db.relationship('Post', backref='poster')
+    messages = db.relationship('Message', backref='user_message')
 
     # Revoke access to password variable
     @property
@@ -84,3 +86,21 @@ class User(db.Model, UserMixin):
             return None
         return User.query.get_or_404(user_id)
 # -------------------- End of User Model --------------------
+
+
+# -------------------- Slug Model --------------------
+class Slug(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(40))       
+    posts = db.relationship('Post', backref='category')
+# -------------------- End of Slug Model --------------------
+
+
+# -------------------- Message Model --------------------
+class Message(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    content = db.Column(db.String(100))       
+    date_posted = db.Column(db.DateTime, default=datetime.now)
+    post_id = db.Column(db.Integer, db.ForeignKey('post.id'))
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+# -------------------- End of Message Model --------------------
