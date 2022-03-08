@@ -1,7 +1,7 @@
 from flask import Blueprint, redirect, render_template, flash, url_for, abort
 from flask_login import current_user, login_required
 from website.webforms import AddPostForm, ReplyForm
-from website.models import Post, Slug, Message, db
+from website.models import Post, Slug, UserMessage, db
 from website.decoretors import check_confirmed
 
 
@@ -51,7 +51,7 @@ def add_post():
 @check_confirmed
 def view_post(slug, id):
     # Variables
-    messages = [message for message in Message.query.filter_by(post_id=id)]
+    messages = [message for message in UserMessage.query.filter_by(post_id=id)]
     len_messages = len([message for message in messages])
     number_of_pages = len([i for i in range(0, len(messages), LIMIT_POST_ON_PAGE)])
 
@@ -60,11 +60,11 @@ def view_post(slug, id):
 
 
     if form.validate_on_submit():
-        message = Message(content=form.content.data, post_id=id, user_id=current_user.id)
+        message = UserMessage(content=form.content.data, post_id=id, user_id=current_user.id)
         db.session.add(message)
         db.session.commit()
 
-        number_of_pages = len([i for i in range(0, len([message for message in Message.query.filter_by(post_id=id)]), LIMIT_POST_ON_PAGE)])
+        number_of_pages = len([i for i in range(0, len([message for message in UserMessage.query.filter_by(post_id=id)]), LIMIT_POST_ON_PAGE)])
         
         return redirect(url_for('posts.view_messages', slug=slug, id=id, page_number=number_of_pages))
 
@@ -80,7 +80,7 @@ def view_post(slug, id):
 @check_confirmed
 def view_messages(slug, id, page_number):
     # Variables
-    messages = [message for message in Message.query.filter_by(post_id=id)]
+    messages = [message for message in UserMessage.query.filter_by(post_id=id)]
     number_of_pages = len([i for i in range(0, len(messages), LIMIT_POST_ON_PAGE)])
     start_list_index = (page_number - 1) * LIMIT_POST_ON_PAGE
     end_list_index = page_number * LIMIT_POST_ON_PAGE
@@ -93,11 +93,11 @@ def view_messages(slug, id, page_number):
     if page_number > number_of_pages: return abort(404)
     
     if form.validate_on_submit():
-        message = Message(content=form.content.data, post_id=id, user_id=current_user.id)
+        message = UserMessage(content=form.content.data, post_id=id, user_id=current_user.id)
         db.session.add(message)
         db.session.commit()
 
-        messages = [message for message in Message.query.filter_by(post_id=id)]
+        messages = [message for message in UserMessage.query.filter_by(post_id=id)]
         number_of_pages = len([i for i in range(0, len(messages), LIMIT_POST_ON_PAGE)])
 
         return redirect(url_for('posts.view_messages', slug=slug, id=id, page_number=number_of_pages))
@@ -196,7 +196,7 @@ def posts_category(category):
     # Variables
     slug_id = Slug.query.filter_by(name=category).first_or_404()
     posts = Post.query.filter_by(slug=slug_id.id)
-    messages = Message.query.order_by('date_posted')
+    messages = UserMessage.query.order_by('date_posted')
 
 
     return render_template('posts_category.html', posts=posts, category=category, messages=messages)

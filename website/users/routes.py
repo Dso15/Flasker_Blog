@@ -1,14 +1,12 @@
 from flask import Blueprint, redirect, render_template, url_for, request, flash, abort
 from flask_login import login_user, login_required, logout_user, current_user
-from flask_mail import Message
 
 from website.webforms import LoginForm, RegisterForm, EditAccountForm, ChangePasswordForm, RequestResetPasswordForm, ResetPasswordForm
 from website.users.utils import email_or_username_or_not_exist, flash_errors, send_mail
-from website.models import User
+from website.models import User, UserMessage
 from website.decoretors import check_confirmed
-from website import db, mail
+from website import db
 
-import os
 from datetime import datetime
 
 
@@ -85,7 +83,11 @@ def logout():
 @login_required
 @check_confirmed
 def profile():
-    return render_template('profile.html')
+    # Variables
+    amount_of_user_messages = len(UserMessage.query.filter_by(user_id=current_user.id).all())
+
+
+    return render_template('profile.html', amount_of_user_messages=amount_of_user_messages)
 # -------------------- End of Profile Route --------------------
 
 
