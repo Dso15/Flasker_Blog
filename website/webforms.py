@@ -1,6 +1,6 @@
 from flask_wtf import FlaskForm
 from flask_ckeditor import CKEditorField
-from wtforms import EmailField, PasswordField, StringField, SubmitField, SelectField
+from wtforms import EmailField, PasswordField, StringField, SubmitField, SelectField, BooleanField
 from wtforms.validators import DataRequired, Email, Length, EqualTo, ValidationError
 from wtforms.widgets import TextArea
 
@@ -12,6 +12,7 @@ from website.models import User
 class LoginForm(FlaskForm):
     email = StringField('Email/Username:')
     password = PasswordField('Password:')
+    remember_me = BooleanField('Remember For 30 Days')
     submit = SubmitField('Login')
 
 

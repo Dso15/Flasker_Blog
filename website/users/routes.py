@@ -61,7 +61,7 @@ def login():
         user_is_exist = email_or_username_or_not_exist(form.email.data)
 
         if user_is_exist and User.verify_password(user_is_exist, form.password.data):
-            login_user(user_is_exist)
+            login_user(user_is_exist, remember=form.remember_me.data)
             return redirect(url_for('main.index'))
         
     form.email.data = ''
