@@ -20,9 +20,11 @@ LIMIT_POST_ON_PAGE = 3
 @check_confirmed
 def add_post():
     form = AddPostForm()
+
     # Getting all categories to the selected field
     categories = [(g.id, g.name) for g in Slug.query.order_by('name')]
     form.slug.choices = categories
+
 
     if form.validate_on_submit():
         poster = current_user.id
@@ -39,6 +41,7 @@ def add_post():
 
         # Return a message to user 
         flash("Blog post  submitted successfully", category='success')
+
 
     # Redirect to the webpage
     return render_template('add_post.html', form=form)
@@ -118,6 +121,7 @@ def edit_post(id):
     post = Post.query.get_or_404(id)
     form = AddPostForm()
 
+
     if form.validate_on_submit():
         post.title = form.title.data
         post.slug = form.slug.data
@@ -131,6 +135,7 @@ def edit_post(id):
         flash("Post has been updated!", category='success')
 
         return redirect(url_for('posts.view_post', id=post.id))
+
     if current_user.id == post.poster.id:
         form.title.data = post.title
         form.slug.data = post.slug
@@ -153,6 +158,7 @@ def delete_post(id):
     post_to_delete = Post.query.get_or_404(id)
     id = current_user.id
 
+
     if id == post_to_delete.poster.id or current_user.is_admin == True:
         try:
             db.session.delete(post_to_delete)
@@ -162,7 +168,6 @@ def delete_post(id):
             flash("Post has been deletet!", category='success')
 
             return redirect(url_for('posts.my_posts'))
-
         except:
             # Return an error message
             flash("Whoops! There was a problem deleting post - Try Again", category='error')
@@ -184,7 +189,8 @@ def my_posts():
     # Grab all the posts from the database
     posts = Post.query.filter_by(poster_id=current_user.id)
 
-    return render_template('posts.html', posts=posts)
+
+    return render_template('my_posts.html', posts=posts)
 # -------------------- End of My_Posts Route --------------------
 
 

@@ -1,12 +1,12 @@
+from email import message
 from flask import Blueprint, render_template
-from website.models import Post, Slug
+from website.models import Post, Slug, UserMessage
 from website.webforms import SearchForm
 
 
 
 # Blueprint declaration
 main = Blueprint('main', __name__, template_folder='main_templates')
-
 
 
 # Pass stuff to base file
@@ -20,10 +20,16 @@ def base():
 # -------------------- Index Route --------------------
 @main.route('/')
 def index():
-    posts = Post.query.order_by(Post.date_posted)
+    # Variables
+    amount_of_latest_posts = -6 # Number should be negative
+    slugs = Slug.query.order_by('id').all()
+    messages = UserMessage.query.order_by('date_posted').all()
 
-    # Post the latest 3 post.
-    return render_template('index.html', posts=posts[-3:])
+    #  amount_of_latest_posts should be negative because the list order_by 'date_posted', Last 'post' is in the last 'index'.
+    post_by_time_and_slug = [dict(category=slug, posts=Post.query.filter_by(slug=slug.id).order_by('date_posted').all()[amount_of_latest_posts:]) for slug in slugs]
+
+    
+    return render_template('index.html', messages=messages, post_by_time_and_slug=post_by_time_and_slug, amount_of_latest_posts=abs(amount_of_latest_posts))
 # -------------------- End of Index Route --------------------
 
 
@@ -32,6 +38,7 @@ def index():
 def search():
     form = SearchForm()
     posts = Post.query
+
 
     if form.validate_on_submit():
         # Get data from submitted form
