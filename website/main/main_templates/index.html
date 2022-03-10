@@ -35,6 +35,7 @@
                     </div>
                 </div>
             {% endfor %} 
+            <a href="{{ url_for('posts.posts_category', category=item['category'].name) }}" class="link-light text-center"><small>Read More...</small></a>
         </div>
     {% endfor %}
 {% endblock %}

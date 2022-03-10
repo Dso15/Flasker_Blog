@@ -1,5 +1,5 @@
 from email import message
-from flask import Blueprint, render_template
+from flask import Blueprint, redirect, render_template, url_for, request
 from website.models import Post, Slug, UserMessage
 from website.webforms import SearchForm
 
@@ -14,7 +14,8 @@ main = Blueprint('main', __name__, template_folder='main_templates')
 def base():
     form = SearchForm()
     categories = Slug.query.order_by('id')
-    return dict(form=form, categories=categories)
+    messages = UserMessage.query.order_by('id')
+    return dict(form=form, categories=categories, messages=messages)
 
     
 # -------------------- Index Route --------------------
@@ -34,20 +35,28 @@ def index():
 
 
 # -------------------- Search Route --------------------
-@main.route('/search', methods=['POST'])
+@main.route('/search', methods=['GET', 'POST'])
 def search():
+    # Variables
     form = SearchForm()
     posts = Post.query
 
 
+    if request.method == 'GET': return redirect(url_for('main.index'))
+
+
     if form.validate_on_submit():
+        print('form sent')
         # Get data from submitted form
         post_searched = form.searched.data
         # Query the Database
         posts = posts.filter(Post.content.like('%' + post_searched + '%'))
         posts = posts.order_by(Post.title).all()
 
+
         return render_template('search.html', form=form, searched=post_searched, posts=posts)
+    else:
+        return redirect(request.referrer)
 # -------------------- End of Search Route --------------------
 
 
