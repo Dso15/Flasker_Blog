@@ -76,6 +76,11 @@ class ReplyForm(FlaskForm):
     submit = SubmitField('Reply')
 
 
+class EditMessageForm(FlaskForm):
+    content = CKEditorField('Edit Message:', validators=[DataRequired()])
+    submit = SubmitField('Edit') 
+
+
 class SearchForm(FlaskForm):
     searched = StringField('Searched:', validators=[DataRequired()])
     submit = SubmitField('Search')

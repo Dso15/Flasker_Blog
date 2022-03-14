@@ -1,6 +1,6 @@
 from flask import Blueprint, redirect, render_template, flash, url_for, abort
 from flask_login import current_user, login_required
-from website.webforms import AddPostForm, ReplyForm
+from website.webforms import AddPostForm, ReplyForm, EditMessageForm
 from website.models import Post, Slug, UserMessage, db
 from website.decoretors import check_confirmed
 
@@ -110,6 +110,39 @@ def view_messages(slug, id, page_number):
                                                 form=form, start_list_index=start_list_index, 
                                                 end_list_index=end_list_index, number_of_pages=number_of_pages, page_number=page_number)
 # -------------------- End of View_Messages Route --------------------
+
+
+# -------------------- Edit_Message Route --------------------
+@posts.route('/post/<slug>/<int:id>/page=<int:page_number>/edit-message/message-<int:message_id>', methods=['GET', 'POST'])
+@login_required
+@check_confirmed
+def edit_message(slug, id, page_number, message_id):
+    # Variables
+    message_to_edit = UserMessage.query.get_or_404(message_id)
+    form = EditMessageForm()
+
+
+    if form.validate_on_submit():
+        message_to_edit.content = form.content.data
+
+        # Update database
+        db.session.add(message_to_edit)
+        db.session.commit()
+
+        # Return a message to user
+        flash("Message has been Edited!", category='success')
+
+        return redirect(url_for('posts.view_messages', slug=slug, id=id, page_number=page_number))
+
+    if current_user.id == message_to_edit.user_id:
+        form.content.data = message_to_edit.content
+
+        return render_template('edit_message.html', form=form, message_id=message_to_edit.id, slug=slug, id=id, page_number=page_number)
+    else:
+        # Return a message to user
+        flash("You aren't authorized to edit this message", category='error')
+        return redirect(url_for('posts.view_post', slug=slug, id=id, page_number=page_number))
+# -------------------- End of Edit_Message Route --------------------
 
 
 # -------------------- Edit_Post Route --------------------
