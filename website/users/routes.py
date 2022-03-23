@@ -54,6 +54,9 @@ def register():
 def login():
     form = LoginForm()
 
+
+    if current_user.is_authenticated: return redirect(url_for('main.index'))
+
     if form.validate_on_submit():
         user_is_exist = email_or_username_or_not_exist(form.email.data)
 

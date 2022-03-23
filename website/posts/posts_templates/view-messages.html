@@ -36,11 +36,20 @@
                                         <small>{{ message.date_posted }}</small>
                                         <h2>{{ message.user_message.username }}</h2>
                                     </div>
-                                    <div class="p-2 bd-highlight"><a href="{{ url_for('posts.edit_message', slug=slug, id=id, page_number=page_number, message_id=message.id) }}" class="btn btn-outline-light btn-sm rounded-pill"><i class="bi bi-pencil me-1"></i>Edit</a></div>
+                                    {% if current_user.id == message.user_id %}
+                                        <div class="p-2 bd-highlight">
+                                            <a href="{{ url_for('posts.edit_message', slug=slug, id=id, page_number=1, message_id=message.id) }}" class="btn btn-outline-light btn-sm rounded-pill">
+                                                <i class="bi bi-pencil me-1"></i>Edit
+                                            </a>
+                                            <button class="btn btn-outline-light btn-sm rounded-pill" id="create_form_button" onclick="create_form('{{ message.content|striptags }}', '{{ csrf_token() }}', '{{ message.id }}')">
+                                                Quick Edit
+                                            </button>
+                                        </div>
+                                    {% endif %}
                                 </div>
                             </div>
-                            <div class="card-body  m-3">
-                                <p class="card-text">{{ message.content|safe }}</p>
+                            <div class="card-body  m-3" id="message-body-{{ message.id }}">
+                                {{ message.content|safe }}
                                 <hr class="mt-5">
                                 <h3 class="card-text"><i class="bi bi-image"></i></h3>
                             </div>

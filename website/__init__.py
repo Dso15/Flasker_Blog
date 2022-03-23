@@ -7,11 +7,14 @@ from website.config import Config
 from website.models import login_manager, db
 from website.admin import admin, MyAdminIndexView
 
+from flask_wtf.csrf import CSRFProtect
+
 
 
 migrate = Migrate()
 mail = Mail()
 ckeditor = CKEditor()
+csrf = CSRFProtect()
 
 
 # -------------------- Create_App Func --------------------
@@ -31,6 +34,7 @@ def create_app(config_object=Config):
     login_manager.init_app(app)
     mail.init_app(app)
     ckeditor.init_app(app)
+    csrf.init_app(app)
     admin.init_app(app, index_view=MyAdminIndexView())
 
     with app.app_context():

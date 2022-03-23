@@ -1,4 +1,4 @@
-from flask import Blueprint, redirect, render_template, flash, url_for, abort
+from flask import Blueprint, redirect, render_template, flash, url_for, abort, request
 from flask_login import current_user, login_required
 from website.webforms import AddPostForm, ReplyForm, EditMessageForm
 from website.models import Post, Slug, UserMessage, db
@@ -10,7 +10,7 @@ from website.decoretors import check_confirmed
 posts = Blueprint('posts', __name__, template_folder='posts_templates', url_prefix='/posts')
 
 
-# Global variables
+# Constant variables
 LIMIT_POST_ON_PAGE = 3
 
 
@@ -113,13 +113,16 @@ def view_messages(slug, id, page_number):
 
 
 # -------------------- Edit_Message Route --------------------
-@posts.route('/post/<slug>/<int:id>/page=<int:page_number>/edit-message/message-<int:message_id>', methods=['GET', 'POST'])
+@posts.route('/edit-message/message-<int:message_id>', methods=['GET', 'POST'])
 @login_required
 @check_confirmed
-def edit_message(slug, id, page_number, message_id):
+def edit_message(message_id):
     # Variables
     message_to_edit = UserMessage.query.get_or_404(message_id)
     form = EditMessageForm()
+    if request.method == 'GET': 
+        global referrer 
+        referrer = request.referrer
 
 
     if form.validate_on_submit():
@@ -132,17 +135,46 @@ def edit_message(slug, id, page_number, message_id):
         # Return a message to user
         flash("Message has been Edited!", category='success')
 
-        return redirect(url_for('posts.view_messages', slug=slug, id=id, page_number=page_number))
+        return redirect(referrer)
 
     if current_user.id == message_to_edit.user_id:
         form.content.data = message_to_edit.content
 
-        return render_template('edit_message.html', form=form, message_id=message_to_edit.id, slug=slug, id=id, page_number=page_number)
+        return render_template('edit_message.html', form=form, message_id=message_to_edit.id, referrer=referrer)
     else:
         # Return a message to user
         flash("You aren't authorized to edit this message", category='error')
-        return redirect(url_for('posts.view_post', slug=slug, id=id, page_number=page_number))
+        return redirect(referrer)
 # -------------------- End of Edit_Message Route --------------------
+
+
+# -------------------- Quick_Edit_Message Route --------------------
+@posts.route('quick-message-edit-<int:message_id>', methods=['POST'])
+@login_required
+@check_confirmed
+def quick_message_edit(message_id):
+    # Variables
+    message_to_edit = UserMessage.query.get_or_404(message_id)
+    
+
+    if current_user.id == message_to_edit.user_id:
+
+        message_to_edit.content = request.form['content']
+
+        # Update database
+        db.session.add(message_to_edit)
+        db.session.commit()
+
+        # Return a message to user
+        flash("Message has been Edited!", category='success')
+
+        return redirect(request.referrer)
+
+    else:
+        # Return a message to user
+        flash("You aren't authorized to edit this message", category='error')
+        return redirect(request.referrer)
+# -------------------- Quick_Edit_Message Route --------------------
 
 
 # -------------------- Edit_Post Route --------------------
