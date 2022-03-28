@@ -51,7 +51,7 @@
                             <div class="card-body  m-3" id="message-body-{{ message.id }}">
                                 {{ message.content|safe }}
                                 <hr class="mt-5">
-                                <h3 class="card-text"><i class="bi bi-image"></i></h3>
+                                <h5 class="card-text">{{ message.user_message.about_author }}</h5>
                             </div>
                         </div> 
                     </div>

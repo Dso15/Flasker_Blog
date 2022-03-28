@@ -26,7 +26,7 @@ def register():
 
         if user_to_add is None and username_check is None:
             # Add User To Database
-            user_to_add = User(name=form.name.data, username=form.username.data, email=email, password=form.password.data)
+            user_to_add = User(name=form.name.data, username=form.username.data, about_author=form.about_author.data, email=email, password=form.password.data)
             db.session.add(user_to_add)
             db.session.commit()
 
@@ -122,6 +122,9 @@ def edit_account(id):
                 user_to_update.email = request.form['email']
             else:
                 flash("Email is Already Taken", category='error')
+
+        # Update about author 
+        user_to_update.about_author = request.form['about_author']
         
         try:
             db.session.commit()
@@ -150,6 +153,7 @@ def edit_account(id):
     form.name.data = user_to_update.name
     form.username.data = user_to_update.username
     form.email.data = user_to_update.email
+    form.about_author.data = user_to_update.about_author
 
     return render_template('edit_account.html', form=form, change_password_form=change_password_form, id=id, abort=abort)
 # -------------------- End of Edit_Account Route --------------------

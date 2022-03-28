@@ -1,8 +1,7 @@
 from flask_wtf import FlaskForm
 from flask_ckeditor import CKEditorField
-from wtforms import EmailField, PasswordField, StringField, SubmitField, SelectField, BooleanField
+from wtforms import EmailField, PasswordField, StringField, SubmitField, SelectField, BooleanField, TextAreaField
 from wtforms.validators import DataRequired, Email, Length, EqualTo, ValidationError
-from wtforms.widgets import TextArea
 
 from website.models import User
 
@@ -17,11 +16,12 @@ class LoginForm(FlaskForm):
 
 
 class RegisterForm(FlaskForm):
-    name = StringField('Name:', validators=[DataRequired()])
-    username = StringField('Username:', validators=[DataRequired()])
-    email = EmailField('Email:', validators=[DataRequired(), Email()])
-    password = PasswordField('Password:', validators=[DataRequired(), Length(min=8, max=30), EqualTo('re_password')])
-    re_password = PasswordField('Confirm Password:', validators=[DataRequired()])
+    name = StringField('*Name:', validators=[DataRequired()])
+    username = StringField('*Username:', validators=[DataRequired()])
+    email = EmailField('*Email:', validators=[DataRequired(), Email()])
+    about_author = TextAreaField("About Author")
+    password = PasswordField('*Password:', validators=[DataRequired(), Length(min=8, max=30), EqualTo('re_password')])
+    re_password = PasswordField('*Confirm Password:', validators=[DataRequired()])
     submit = SubmitField('Register')
 
 
@@ -30,6 +30,7 @@ class EditAccountForm(FlaskForm):
     name = StringField('Name:', validators=[DataRequired()])
     username = StringField('Username:', validators=[DataRequired()])
     email = EmailField('Email:', validators=[DataRequired(), Email()])
+    about_author = TextAreaField("About Author")
     submit = SubmitField('Save Changes')
 
 

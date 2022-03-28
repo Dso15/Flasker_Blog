@@ -15,9 +15,12 @@
 
             <strong>{{ form.email.label(class='form-label')}}</strong>
             {{ form.email(class='form-control mb-3')}}
+
+            <strong>{{ form.about_author.label(class='form-label')}}</strong>
+            {{ form.about_author(class='form-control mb-3')}}
     
             <strong>{{ form.password.label(class='form-label')}}</strong>
-            {{ form.password(class='form-control mb-3')}}
+            {{ form.password(class='form-control mb-3', autocomplete="new-password")}}
 
             <strong>{{ form.re_password.label(class='form-label')}}</strong>
             {{ form.re_password(class='form-control mb-3')}}

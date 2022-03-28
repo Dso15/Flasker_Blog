@@ -22,16 +22,16 @@
                                 {{ form.identifier(hidden=True, value='EditAccountForm') }}
                                 
                                 <strong>{{ form.name.label(class='form-label')}}</strong>
-                                {{ form.name(class='form-control')}}
-                                <br />
+                                {{ form.name(class='form-control mb-3')}}
                 
                                 <strong>{{ form.username.label(class='form-label')}}</strong>
-                                {{ form.username(class='form-control')}}
-                                <br />
+                                {{ form.username(class='form-control mb-3')}}
                 
                                 <strong>{{ form.email.label(class='form-label')}}</strong>
-                                {{ form.email(class='form-control')}}
-                                <br />
+                                {{ form.email(class='form-control mb-3')}}
+
+                                <strong>{{ form.about_author.label(class='form-label')}}</strong>
+                                {{ form.about_author(class='form-control mb-3')}}
                                         
                                 <div class="vstack gap-2 col-md-5 mx-auto">
                                     {{ form.submit(class='btn btn-dark btn-sm')}}
