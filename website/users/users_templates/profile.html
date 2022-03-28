@@ -8,14 +8,25 @@
           {{ current_user.name}}
         </div>
         <div class="card-body">
-          <p class="card-text"><strong>User Id:</strong> {{ current_user.id }}</p>
-          <p class="card-text"><strong>Name:</strong> {{ current_user.name }}</p>
-          <p class="card-text"><strong>Username:</strong> {{ current_user.username }}</p>
-          <p class="card-text"><strong>Email:</strong> {{ current_user.email }}</p>
-          <p class="card-text"><strong>Number of messages:</strong> {{ amount_of_user_messages }}</p>
-          <p class="card-text"><strong>Number of Posts:</strong> {{ amount_of_user_posts }}</p>
+          <div class="container">
+            <div class="row">
+              <div class="col-8">
+                <p class="card-text"><strong>User Id:</strong> {{ current_user.id }}</p>
+                <p class="card-text"><strong>Name:</strong> {{ current_user.name }}</p>
+                <p class="card-text"><strong>Username:</strong> {{ current_user.username }}</p>
+                <p class="card-text"><strong>Email:</strong> {{ current_user.email }}</p>
+                <p class="card-text"><strong>Number of messages:</strong> {{ amount_of_user_messages }}</p>
+                <p class="card-text"><strong>Number of Posts:</strong> {{ amount_of_user_posts }}</p>
+      
+                <a href="{{ url_for('users.logout') }}" class="btn btn-secondary btn-sm">Logout</a>
+              </div>
 
-          <a href="{{ url_for('users.logout') }}" class="btn btn-secondary btn-sm">Logout</a>
+              <div class="col-4 d-flex justify-content-end p-5">
+                <img src="{{ url_for('static', filename='images/default_profile_pic.png') }}" alt="" srcset="" class="rounded-circle">
+              </div>
+            </div>
+          </div>
+          
         </div>
       </div>
     
