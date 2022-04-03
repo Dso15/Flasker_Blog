@@ -17,7 +17,7 @@
                     <div class="card">
                         <h5 class="card-header text-center bg-dark text-light">Edit Profile</h5>
                         <div class="card-body" style="background-color: #c9c9c9;">
-                            <form action="{{ url_for('users.edit_account', id=current_user.id) }}" method="POST" class="px-5">
+                            <form action="{{ url_for('users.edit_account', id=current_user.id) }}" method="POST" enctype="multipart/form-data" class="px-5">
                                 {{ form.hidden_tag() }}
                                 {{ form.identifier(hidden=True, value='EditAccountForm') }}
                                 
@@ -32,6 +32,9 @@
 
                                 <strong>{{ form.about_author.label(class='form-label')}}</strong>
                                 {{ form.about_author(class='form-control mb-3')}}
+
+                                <strong>{{ form.profile_pic.label(class='form-label')}}</strong>
+                                {{ form.profile_pic(class='form-control mb-3')}}
                                         
                                 <div class="vstack gap-2 col-md-5 mx-auto">
                                     {{ form.submit(class='btn btn-dark btn-sm')}}

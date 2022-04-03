@@ -1,5 +1,6 @@
-from flask import Blueprint, redirect, render_template, url_for, request, flash, abort
+from flask import Blueprint, redirect, render_template, url_for, request, flash, abort, current_app
 from flask_login import login_user, login_required, logout_user, current_user
+from werkzeug.utils import secure_filename
 
 from website.webforms import LoginForm, RegisterForm, EditAccountForm, ChangePasswordForm, RequestResetPasswordForm, ResetPasswordForm
 from website.users.utils import email_or_username_or_not_exist, flash_errors, send_mail
@@ -7,6 +8,8 @@ from website.models import User, UserMessage, Post, db
 from website.decoretors import check_confirmed
 
 from datetime import datetime
+import uuid as uuid
+import os
 
 
 
@@ -125,6 +128,18 @@ def edit_account(id):
 
         # Update about author 
         user_to_update.about_author = request.form['about_author']
+
+        # Update Profile Pic
+        user_to_update.profile_pic = request.files['profile_pic']
+        # Grab image name
+        pic_filename = secure_filename(user_to_update.profile_pic.filename)
+        # Set UUID
+        pic_name = str(uuid.uuid1()) + "_" + pic_filename
+        # Save that image
+        user_to_update.profile_pic.save(os.path.join(current_app.config['UPLOAD_FOLDER'], pic_name))
+        # Change it to string to savet to db
+        user_to_update.profile_pic = pic_name
+
         
         try:
             db.session.commit()

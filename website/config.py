@@ -6,6 +6,7 @@ from datetime import timedelta
 # -------------------- Config Class --------------------
 class Config:
     SECRET_KEY = os.urandom(24)
+    UPLOAD_FOLDER = os.environ.get('UPLOAD_FOLDER')
 
 
     REMEMBER_COOKIE_NAME = 'Flask_Blog' 

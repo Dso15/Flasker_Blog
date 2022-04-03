@@ -57,6 +57,7 @@ class User(db.Model, UserMixin):
     posts = db.relationship('Post', backref='poster')
     messages = db.relationship('UserMessage', backref='user_message')
     about_author = db.Column(db.Text(500), nullable=True)
+    profile_pic = db.Column(db.Text(), nullable=True)
 
     # Revoke access to password variable
     @property

@@ -16,6 +16,7 @@
                 <p class="card-text"><strong>Username:</strong> {{ current_user.username }}</p>
                 <p class="card-text"><strong>Email:</strong> {{ current_user.email }}</p>
                 <p class="card-text"><strong>About Author:</strong> {{ current_user.about_author }}</p>
+                <p class="card-text"><strong>Profile pic:</strong> {{ current_user.profile_pic }}</p>
                 <p class="card-text"><strong>Number of messages:</strong> {{ amount_of_user_messages }}</p>
                 <p class="card-text"><strong>Number of Posts:</strong> {{ amount_of_user_posts }}</p>
       
@@ -23,7 +24,11 @@
               </div>
 
               <div class="col-4 d-flex justify-content-end p-5">
-                <img src="{{ url_for('static', filename='images/default_profile_pic.png') }}" alt="" srcset="" class="rounded-circle">
+                {% if current_user.profile_pic %}
+                  <img src="{{ url_for('static', filename='images/' + current_user.profile_pic) }}" alt="" srcset="" class="rounded-circle">
+                {% else %}
+                  <img src="{{ url_for('static', filename='images/default_profile_pic.png') }}" alt="" srcset="" class="rounded-circle">
+                {% endif %}
               </div>
             </div>
           </div>
