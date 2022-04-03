@@ -33,7 +33,7 @@
                                 <div class="d-flex bd-highlight">
                                     <div class="p-2 bd-highlight">
                                         {% if message.user_message.profile_pic %}
-                                            <img src="{{ url_for('static', filename='images/' + current_user.profile_pic) }}" alt="" srcset="" width="50" class="rounded-circle">
+                                            <img src="{{ url_for('static', filename='images/' + message.user_message.profile_pic) }}" alt="" srcset="" width="50" class="rounded-circle">
                                         {% else %}
                                             <img src="{{ url_for('static', filename='images/default_profile_pic.png') }}" alt="" srcset="" width="50" class="rounded-circle">
                                         {% endif %}
